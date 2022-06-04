@@ -62,7 +62,7 @@ class UserView(APIView):
         if not token:
             raise AuthenticationFailed('Unauthenticated!')
         try:
-            payload = jwt.decode(token, 'secret', algorithm=['HS256'])
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Unauthenticated!')
         user = User.objects.filter(id=payload['id']).first()
@@ -291,16 +291,28 @@ def MaterielByProjId(request,id=0):
         materials_serializer = MaterialSerializer(materiels, many=True)
         return JsonResponse(materials_serializer.data, safe=False)
 
-# def EmployByTeamId_TeamByProjId(request,idPro=0,idTeam=0,):
+#get taches by project
+def TacheByProjId(request,id=0):
 
-#      if request.method == 'GET':
-#         empl = Employee.objects.raw(
-#             "select * "+
-#             "from app_employee as emp, app_team as team,app_project as pro "+
-#             "where pro.team_id=team.id and emp.team_id=team.id and team.id="+idTeam+" and pro.id="+idPro
-#         )
-#         empl_serializer = EmployeeSerializer(empl, many=True)
-#         return JsonResponse(empl_serializer.data, safe=False)  
+     if request.method == 'GET':
+        taches = Tache.objects.raw(
+           "select * "+
+           "from app_tache as t,app_project as pro "+
+           "where pro.id=t.project_id and t.project_id="+id
+        )
+        taches_serializer = TacheSerializer(taches, many=True)
+        return JsonResponse(taches_serializer.data, safe=False)
+
+def EmployByTeamId_TeamByProjId(request,idPro=0):
+
+     if request.method == 'GET':
+        empl = Employee.objects.raw(
+            "select emp.* "+
+            "from app_employee as emp ,app_project as pro, app_tache as tache "+
+            "where tache.employee_id=emp.id and pro.id=tache.project_id and pro.id="+idPro
+        )
+        empl_serializer = EmployeeSerializer(empl, many=True)
+        return JsonResponse(empl_serializer.data, safe=False)  
 
 # def TacheByEmployId_EmployByTeamId_TeamByProjId(request,idPro=0,idTeam=0,idEmpl=0):
 
@@ -376,3 +388,16 @@ def tacheisNotActive(request,idPro=0):
         )
         total=cursor.fetchone()[0]
         return JsonResponse(total, safe=False)
+
+
+##get user by departmenet ID 
+def UserByDepId(request,id=0):
+
+     if request.method == 'GET':
+        user = User.objects.raw(
+           "select * "+
+           "from app_user as user,app_department as dep "+
+           "where dep.id=user.department_id and user.department_id="+id
+        )
+        user_serializer = UserSerializer(user, many=True)
+        return JsonResponse(user_serializer.data, safe=False)

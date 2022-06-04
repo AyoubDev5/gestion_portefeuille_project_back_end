@@ -2,19 +2,19 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+class Department(models.Model):
+    name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class User(AbstractUser):
     name = models.CharField(max_length=255)
     email = models.CharField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
     role =models.CharField(max_length=255,default='user')
+    department =  models.ForeignKey(Department, on_delete=models.CASCADE)
     username = None    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-
-class Department(models.Model):
-    name = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    user =  models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Project(models.Model):
     title = models.CharField(max_length=255)
@@ -24,8 +24,7 @@ class Project(models.Model):
     reason = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     modify_at = models.DateTimeField(auto_now=True)
-    status = models.BooleanField(default = True)
-    user =  models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(max_length=255,default='In Progress')
     department =  models.ForeignKey(Department, on_delete=models.CASCADE)
 
 class Employee(models.Model):
@@ -36,7 +35,7 @@ class Employee(models.Model):
 
 class Tache(models.Model):
     name = models.CharField(max_length=255)
-    status = models.BooleanField(default = True)
+    status = models.CharField(max_length=255,default='In Progress')
     start_date = models.DateField(auto_now_add=True)
     end_date = models.CharField(max_length=255)
     employee =  models.ForeignKey(Employee, on_delete=models.CASCADE)
