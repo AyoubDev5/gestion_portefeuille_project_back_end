@@ -345,9 +345,9 @@ def employCount(request,idPro=0):
      if request.method == 'GET':
         cursor = connection.cursor()
         cursor.execute(
-            "select  Count(emp.id) as total "+
-            "from app_employee as emp, app_project as pro ,app_team as team "+
-            "where team.id = pro.team_id and emp.team_id=team.id and pro.id ="+idPro
+            "select  Count( DISTINCT tache.employee_id) as total "+
+            "from app_employee as emp, app_project as pro ,app_tache as tache "+
+            "where tache.employee_id = emp.id and pro.id=tache.project_id and pro.id ="+idPro
         )
         total=cursor.fetchone()[0]
         return JsonResponse(total, safe=False)
@@ -357,9 +357,9 @@ def tacheCount(request,idPro=0):
      if request.method == 'GET':
         cursor = connection.cursor()
         cursor.execute(
-            "select  Count(tache.id) as total "+
-            "from app_employee as emp, app_project as pro ,app_team as team, app_tache as tache "+
-            "where team.id = pro.team_id and emp.team_id=team.id and tache.employee_id=emp.id and  pro.id ="+idPro
+             "select count(tache.id) as total "+
+             "from app_tache as tache,app_project as pro "+
+             "where tache.project_id=pro.id and pro.id="+idPro
         )
         total=cursor.fetchone()[0]
         return JsonResponse(total, safe=False)
@@ -401,3 +401,46 @@ def UserByDepId(request,id=0):
         )
         user_serializer = UserSerializer(user, many=True)
         return JsonResponse(user_serializer.data, safe=False)
+
+#chart about employee count tache
+
+def employeesWithCountTache (request,idPro=0):
+
+    if request.method == 'GET':
+        cursor = connection.cursor()
+        cursor.execute(
+            "select count(emp.id) as s, emp.nom,emp.prenom "+
+            "from app_tache as tache,app_project as pro,app_employee as emp "+
+            "where tache.employee_id = emp.id and pro.id=tache.project_id and pro.id="+idPro+" "+
+            "group by emp.nom,emp.prenom"
+        )
+        total=cursor.fetchall()
+        return JsonResponse(total, safe=False) 
+    
+
+# chart about project finish all taches 
+
+def projectNameWithCountTachesStatus1(request,idPro=0):
+
+     if request.method == 'GET':
+        cursor = connection.cursor()
+        cursor.execute(
+            "select count(tache.id) as total,pro.title "+
+            "from app_tache as tache,app_project as pro "+
+            "where tache.project_id=pro.id and tache.status='In Progress' and pro.id="+idPro
+        )
+        total=cursor.fetchone()
+        return JsonResponse(total, safe=False) 
+
+def projectNameWithCountTachesStatus2(request,idPro=0):
+
+     if request.method == 'GET':
+        cursor = connection.cursor()
+        cursor.execute(
+            "select count(tache.id) as total,pro.title "+
+            "from app_tache as tache,app_project as pro "+
+            "where tache.project_id=pro.id and tache.status='Incomplete' and pro.id="+idPro
+        )
+        total=cursor.fetchone()
+        return JsonResponse(total, safe=False) 
+
