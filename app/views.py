@@ -414,8 +414,13 @@ def employeesWithCountTache (request,idPro=0):
             "where tache.employee_id = emp.id and pro.id=tache.project_id and pro.id="+idPro+" "+
             "group by emp.nom,emp.prenom"
         )
-        total=cursor.fetchall()
-        return JsonResponse(total, safe=False) 
+        # total=cursor.fetchall()
+        columns = [col[0] for col in cursor.description]
+        return JsonResponse([
+            dict(zip(columns, row))
+            for row in cursor.fetchall()
+        ], safe=False)
+        # return JsonResponse(total, safe=False) 
     
 
 # chart about project finish all taches 
@@ -439,8 +444,30 @@ def projectNameWithCountTachesStatus2(request,idPro=0):
         cursor.execute(
             "select count(tache.id) as total,pro.title "+
             "from app_tache as tache,app_project as pro "+
-            "where tache.project_id=pro.id and tache.status='Incomplete' and pro.id="+idPro
+            "where tache.project_id=pro.id and tache.status='In Completed' and pro.id="+idPro
         )
         total=cursor.fetchone()
         return JsonResponse(total, safe=False) 
 
+def projectNameWithCountTachesStatus3(request,idPro=0):
+
+     if request.method == 'GET':
+        cursor = connection.cursor()
+        cursor.execute(
+            "select count(tache.id) as total,pro.title "+
+            "from app_tache as tache,app_project as pro "+
+            "where tache.project_id=pro.id and tache.status='Completed' and pro.id="+idPro
+        )
+        total=cursor.fetchone()
+        return JsonResponse(total, safe=False) 
+##get user by departmenet ID 
+def DepByUserId(request,id=0):
+
+     if request.method == 'GET':
+        department = Department.objects.raw(
+           "select * "+
+           "from app_department as dep, app_user as user "+
+           "where dep.id=user.department_id and user.department_id="+id
+        )
+        department_serializer = DepartmentSerializer(department, many=True)
+        return JsonResponse(department_serializer.data, safe=False)

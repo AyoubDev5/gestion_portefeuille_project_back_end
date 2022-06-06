@@ -16,6 +16,7 @@ urlpatterns = [
 
     re_path(r'^departments$',views.DepartmentApi),
     re_path(r'^department/([0-9]+)$',views.DepartmentApi),    
+    re_path(r'^departmentByUser/([0-9]+)$',views.DepByUserId),
 
     re_path(r'^employees$',views.EmployeeApi),
     re_path(r'^employee/([0-9]+)$',views.EmployeeApi),
@@ -50,6 +51,7 @@ urlpatterns = [
     re_path(r'^projet/([0-9]+)/countEmpWithTache$',views.employeesWithCountTache),
     re_path(r'^projet/([0-9]+)/countTacheStatus$',views.projectNameWithCountTachesStatus1),
     re_path(r'^projet/([0-9]+)/countTacheStatusNew$',views.projectNameWithCountTachesStatus2),
+    re_path(r'^projet/([0-9]+)/countTacheStatusNew1$',views.projectNameWithCountTachesStatus3),
 
 
 
