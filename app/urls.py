@@ -52,6 +52,7 @@ urlpatterns = [
     re_path(r'^projet/([0-9]+)/countTacheStatus$',views.projectNameWithCountTachesStatus1),
     re_path(r'^projet/([0-9]+)/countTacheStatusNew$',views.projectNameWithCountTachesStatus2),
     re_path(r'^projet/([0-9]+)/countTacheStatusNew1$',views.projectNameWithCountTachesStatus3),
+    re_path(r'^projectById/([0-9]+)$',views.ProjectById),
 
 
 

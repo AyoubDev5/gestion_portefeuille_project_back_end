@@ -471,3 +471,15 @@ def DepByUserId(request,id=0):
         )
         department_serializer = DepartmentSerializer(department, many=True)
         return JsonResponse(department_serializer.data, safe=False)
+
+# get Project By id 
+def ProjectById(request,id=0):
+
+    if request.method == 'GET':
+        projets = Project.objects.raw(
+           "select pro.* "+
+           "from app_project as pro "+
+           "where pro.id="+id
+        )
+        project_serializer = ProjectSerializer(projets, many=True)
+        return JsonResponse(project_serializer.data, safe=False)
