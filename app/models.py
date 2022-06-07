@@ -35,7 +35,7 @@ class Employee(models.Model):
 
 class Tache(models.Model):
     name = models.CharField(max_length=255)
-    status = models.CharField(max_length=255,default='In Progress')
+    statut = models.CharField(max_length=255,default='In Progress')
     start_date = models.DateField(auto_now_add=True)
     end_date = models.CharField(max_length=255)
     employee =  models.ForeignKey(Employee, on_delete=models.CASCADE)
